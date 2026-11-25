@@ -1,0 +1,321 @@
+/* 見えにくさに配慮した高コントラスト配色（黒地に白・黄）。字とボタンは大きく */
+:root {
+  --bg: #000;
+  --fg: #fff;
+  --accent: #ffe600;
+  --blue: #1f3fd1;
+  --green: #0a7a1f;
+  --red: #b80000;
+  --purple: #7a1fb8;
+  --orange: #c25a00;
+  --teal: #00706e;
+  --pink: #b8306e;
+  --gray: #444;
+  --tile: #1c1c1c;
+  --ok: #2fd24a;
+  --gap: 2.2vmin;
+  --radius: 3vmin;
+  --border: max(3px, 0.7vmin);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Hiragino Maru Gothic ProN", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+#app.white { background: #fff; color: #000; }
+
+button {
+  font: inherit;
+  font-weight: bold;
+  color: var(--fg);
+  background: var(--blue);
+  border: var(--border) solid var(--fg);
+  border-radius: var(--radius);
+  padding: 0;
+  cursor: pointer;
+  min-width: 0;
+  min-height: 0;
+  line-height: 1.2;
+  transition: transform 0.08s;
+}
+button:active { transform: scale(0.96); }
+
+/* 上の帯: もどる と、さわるともう一度聞ける題 */
+.top {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  padding: var(--gap) var(--gap) 0;
+}
+.back {
+  background: var(--gray);
+  font-size: clamp(20px, 5vmin, 44px);
+  padding: 1.6vmin 3.4vmin;
+  flex: 0 0 auto;
+}
+.title {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: clamp(24px, 6.4vmin, 64px);
+  text-align: left;
+  padding: 1vmin 0;
+}
+.title .spk { font-size: 0.75em; opacity: 0.8; }
+
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding: var(--gap);
+  min-height: 0;
+}
+@media (orientation: landscape) {
+  .body { flex-direction: row; }
+}
+
+.stim {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  min-width: 0;
+  background: var(--tile);
+  border-radius: var(--radius);
+  overflow: hidden;
+  container-type: size;
+}
+@media (orientation: landscape) {
+  .stim { flex: 1.4; }
+}
+
+/* 答えのボタン。たては横ならび、横向きの画面では たてならび */
+.choices {
+  flex: 1;
+  display: grid;
+  gap: var(--gap);
+  min-height: 0;
+  min-width: 0;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+@media (orientation: landscape) {
+  .choices { grid-auto-flow: row; grid-auto-rows: 1fr; grid-auto-columns: auto; }
+}
+/* 問いの絵が無いときは、答えのボタンで画面をうめる */
+.choices.full { grid-auto-flow: row; grid-auto-rows: 1fr; grid-auto-columns: auto; }
+@media (orientation: landscape) {
+  .choices.full { grid-auto-flow: column; grid-auto-columns: 1fr; grid-auto-rows: auto; }
+}
+.choice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1vmin;
+  font-size: clamp(26px, 8vmin, 90px);
+  overflow: hidden;
+}
+.choice.pic { background: var(--tile); }
+.choice .emoji, .emoji { font-size: clamp(56px, 24vmin, 220px); line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.choice.num { font-size: clamp(48px, 16vmin, 180px); background: var(--blue); }
+.choice.hint { border-color: var(--accent); border-width: calc(var(--border) * 2.6); animation: pulse 0.9s infinite alternate; }
+.choice.wrong { opacity: 0.3; }
+@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.04); } }
+
+/* 顔 */
+.face { width: min(88vw, 80vmin); height: auto; display: block; }
+.facebox {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+.facebox .face { max-height: 100%; }
+.cap {
+  flex: 0 0 auto;
+  min-height: 2.6em;
+  padding: 0 4vmin var(--gap);
+  text-align: center;
+  color: var(--accent);
+  font-weight: bold;
+  font-size: clamp(26px, 7.4vmin, 72px);
+  line-height: 1.3;
+}
+
+/* ホーム */
+.home-top {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: max(64px, 13vmin);
+  padding: var(--gap);
+}
+.gear {
+  position: absolute;
+  left: var(--gap);
+  top: var(--gap);
+  width: max(48px, 10vmin);
+  height: max(48px, 10vmin);
+  touch-action: none;
+}
+.who {
+  background: var(--tile);
+  font-size: clamp(20px, 5.4vmin, 50px);
+  padding: 1vmin 4vmin;
+  height: 100%;
+}
+.home-btns {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap);
+  padding: var(--gap);
+  height: min(26vh, 30vmin);
+}
+.home-btns button { font-size: clamp(30px, 9vmin, 96px); }
+
+/* メニューのタイル */
+.tiles {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 1fr;
+  gap: var(--gap);
+  padding: var(--gap);
+  min-height: 0;
+}
+@media (orientation: landscape) {
+  .tiles { grid-template-columns: repeat(4, 1fr); }
+}
+.tiles button { font-size: clamp(20px, min(6.4vmin, 3.6vw), 64px); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6vmin; }
+.tiles button .emoji { font-size: 1.5em; }
+
+/* かず */
+.dots {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  gap: 3vmin;
+  padding: 3vmin;
+}
+.dots span { font-size: min(var(--size), calc(78cqw / var(--cols)), calc(70cqh / var(--rows)), 160px); line-height: 1; font-family: "Apple Color Emoji", sans-serif; text-align: center; }
+
+/* 大きな字 */
+.big { font-size: clamp(48px, 16vmin, 180px); font-weight: bold; color: var(--fg); text-align: center; padding: 2vmin; word-break: keep-all; }
+
+/* せいかつ */
+.step-dots { display: flex; gap: 2vmin; justify-content: center; padding-top: 2vmin; }
+.step-dots i { width: 4vmin; height: 4vmin; border-radius: 50%; background: var(--gray); }
+.step-dots i.done { background: var(--ok); }
+.step-dots i.now { background: var(--accent); }
+.step-text { font-size: clamp(32px, 9vmin, 96px); font-weight: bold; text-align: center; padding: 3vmin; line-height: 1.35; }
+.donebtn { flex: 0 0 auto; height: min(22vh, 24vmin); margin: var(--gap); background: var(--green); font-size: clamp(34px, 10vmin, 100px); }
+
+/* はなまる（白い背景） */
+.celebrate { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3vmin; }
+.celebrate svg { width: min(80vw, 60vmin); height: auto; }
+.ctext { color: #c00000; font-weight: bold; font-size: clamp(30px, 8vmin, 80px); text-align: center; padding: 0 4vmin; }
+
+/* いろまぜ */
+.mix { flex: 1; display: flex; flex-direction: column; gap: var(--gap); padding: var(--gap); min-height: 0; }
+@media (orientation: landscape) { .mix { flex-direction: row; } }
+.bowl-wrap { flex: 1.3; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 0; min-width: 0; }
+.bowl {
+  width: min(70vw, 50vh, 70vmin);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: calc(var(--border) * 2) solid var(--fg);
+  background: var(--tile);
+  position: relative;
+  overflow: hidden;
+}
+@media (orientation: landscape) { .bowl { width: min(45vw, 62vh); } }
+.bowl .fill { position: absolute; inset: 0; transition: background 1.4s; }
+.bowl.mixing .fill { animation: spin 1.4s ease-in-out; }
+@keyframes spin { from { transform: rotate(0); } to { transform: rotate(720deg); } }
+.bowl-name { font-size: clamp(30px, 8vmin, 80px); font-weight: bold; color: var(--accent); min-height: 1.4em; text-align: center; padding-top: 1vmin; }
+.paints { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); min-height: 0; }
+.paints button { font-size: clamp(26px, 7.4vmin, 72px); }
+.paints button.in { border-color: var(--accent); border-width: calc(var(--border) * 2.4); }
+.swatch { width: 62%; aspect-ratio: 1; border-radius: 50%; border: var(--border) solid var(--fg); }
+.choice.swatchbtn { background: var(--tile); font-size: clamp(20px, 5.6vmin, 56px); }
+
+/* パズル */
+.puzzle { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--gap); padding: var(--gap); min-height: 0; }
+@media (orientation: landscape) { .puzzle { flex-direction: row; } }
+.board {
+  width: min(92vw, 62vh);
+  aspect-ratio: 1;
+  display: grid;
+  gap: 0.8vmin;
+  background: #333;
+  border-radius: 2vmin;
+  padding: 0.8vmin;
+}
+@media (orientation: landscape) { .board { width: min(60vw, 78vh); } }
+.piece { border-radius: 1vmin; border: var(--border) solid #888; background-repeat: no-repeat; }
+.piece.sel { border-color: var(--accent); border-width: calc(var(--border) * 2.4); }
+.piece.ok { border-color: var(--ok); }
+.ref { width: min(40vw, 20vh); aspect-ratio: 1; border-radius: 2vmin; border: var(--border) solid var(--fg); background-size: cover; }
+@media (orientation: landscape) { .ref { width: min(26vw, 34vh); } }
+.ref-label { color: var(--accent); font-weight: bold; font-size: clamp(18px, 4vmin, 36px); text-align: center; }
+
+/* きもちを つたえる */
+.feel-grid { flex: 1; display: grid; grid-template-columns: repeat(2, 1fr); grid-auto-rows: 1fr; gap: var(--gap); padding: var(--gap); min-height: 0; }
+@media (orientation: landscape) { .feel-grid { grid-template-columns: repeat(3, 1fr); } }
+.feel-grid button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6vmin; font-size: clamp(22px, 6vmin, 60px); padding: 1vmin; }
+.feel-grid .face { width: 78%; max-height: 62%; background: #000; border-radius: 2vmin; }
+.okbtn { flex: 0 0 auto; height: min(18vh, 20vmin); margin: var(--gap); background: var(--gray); font-size: clamp(30px, 8vmin, 80px); }
+.feel-name { font-size: clamp(48px, 15vmin, 160px); font-weight: bold; color: var(--accent); text-align: center; }
+
+/* 設定 */
+.settings { flex: 1; overflow-y: auto; padding: var(--gap) 4vmin; font-size: clamp(17px, 3.6vmin, 30px); -webkit-user-select: text; user-select: text; }
+.settings label { display: block; margin: 2.4vmin 0 1vmin; color: var(--accent); font-weight: bold; }
+.settings input[type=text], .settings select {
+  width: 100%;
+  font: inherit;
+  padding: 1.6vmin 2vmin;
+  border-radius: 1.6vmin;
+  border: 2px solid #888;
+  background: #111;
+  color: #fff;
+}
+.settings input[type=range] { width: 100%; }
+.settings .note { color: #bbb; font-size: 0.85em; margin: 0.6vmin 0 0; line-height: 1.5; }
+.settings .row { display: flex; gap: 2vmin; margin-top: 3vmin; }
+.settings .row button { flex: 1; padding: 2vmin; font-size: 1.1em; }
+.seg { display: flex; gap: 2vmin; }
+.seg button { flex: 1; padding: 1.6vmin; background: var(--tile); }
+.seg button.on { background: var(--blue); border-color: var(--accent); }
+
+/* はじめる */
+.start { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4vmin; padding: 4vmin; }
+.start button { width: min(80vw, 70vmin); height: min(24vh, 28vmin); background: var(--green); font-size: clamp(32px, 9vmin, 90px); }
+.start .note { color: #bbb; font-size: clamp(15px, 3.4vmin, 26px); text-align: center; line-height: 1.6; }
